@@ -1,0 +1,11 @@
+[wmbox_init]
+# vm1.debian ansible_port=2222
+vm02.debian ansible_port=2211 
+
+# vm2.debian01 ansible_port=2233
+# vm2.debian02 ansible_port=2233
+
+[wmbox]
+# vm1.debian ansible_port=2222
+# vm2.debian01 ansible_port=2233
+vm02.debian02 ansible_port=2211

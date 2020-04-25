@@ -1,0 +1,9 @@
+---
+  ansible_host: localhost 
+  ansible_user: root
+  host_key_checking: False
+
+  # ansible_ssh_host: localhost 
+  # ansible_ssh_user: root
+
+  ansible_ssh_pub_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCYaH5n2b7mzDPQlQ2qkJSU5OjxAe8A1U2BXugPfMsv/t9L9TCbYvXtRv+B/UagxgplBkjUPH6hRC1M6Lf6v4XPA/c6T7Do4pF2pyAlGL1sdbY6sIJCZsbbADSq3YfIkKF8sD+YGa9wVNqdtONibk5sfUGjq+VWDS8xrOURxOREY5FyDp2kvu+Gi2as5XmtFHX9Qsj5zVbK+qkVLM9txFH4GE/2BbIQKtUsQt0NqFaD9zJfTB6eIxPci39gqiDAop2GzNl9Lt5FXKZ26MqqQXxZSWJhF1GgmvauQoZaj4v81P6lg0BwutdUtJkWXQM1t9rL4goOUJQf1pxDJWdN9lIL jerrod@localhost.localdomain

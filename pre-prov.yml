@@ -1,0 +1,80 @@
+---
+- hosts: wmbox_init
+  become: true
+  gather_facts: true
+
+  tasks:
+
+  - name: Update all packages in Debian-based machines
+    apt:
+      upgrade: yes
+      update_cache: yes
+      # cache_valid_time: 86400
+
+  - name: Install software (Debian-based OS)
+    apt: name="{{ item }}" state=latest
+    #  update_cache=yes
+    loop:
+      - python-yaml
+      - python-jinja2
+      - python-paramiko
+      - python-crypto
+      - sudo
+      - python-minimal
+      - python-pip 
+      - python-dev 
+      - libmysqlclient-dev
+
+  - name: Create user ansible
+    shell: "useradd -m -g sudo -s /bin/bash  ansible"
+
+  - name: Create user ansible
+    shell: "echo 'ansible\tALL=(ALL)\tNOPASSWD:\tALL' > /etc/sudoers.d/ansible"
+
+  - name: make direcotry
+    file:
+      path: "/home/ansible/.ssh"
+      state: directory
+
+  - name: create empty file
+    file:
+      path: "/home/ansible/.ssh/authorized_keys"
+      state: touch
+
+  - name: put pubkey
+    lineinfile:
+      path: "/home/ansible/.ssh/authorized_keys"
+      line: "{{ ansible_ssh_pub_key }}"
+
+  - name: Password based logins are disabled - only public key based logins are allowed.
+    lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?AuthenticationMethods'
+        line: AuthenticationMethods publickey
+
+  - lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^#?PasswordAuthentication'
+      line: PasswordAuthentication no
+
+  - lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^#?ChallengeResponseAuthentication'
+      line: ChallengeResponseAuthentication no      
+
+  - lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^#?PubkeyAuthentication'
+      line: PubkeyAuthentication yes      
+
+  - lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^#?PermitRootLogin'
+      line: PermitRootLogin No
+
+  - name: Restart ssh
+    service: 
+      name: ssh
+      state: restarted
+      
+      

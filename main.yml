@@ -1,0 +1,7 @@
+---
+- name: Install LNMP
+  hosts: wmbox
+
+  roles:
+    # - nginx  
+    - mysql

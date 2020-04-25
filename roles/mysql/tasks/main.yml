@@ -1,0 +1,60 @@
+---
+# проверяем наличие файла, при его присутствии предполагаем что рутовый пароль уже задан
+- stat:
+    path: /etc/.my.cnf
+  register: root_password_set
+
+- debug: msg=" System {{ root_password_set.stat.exists }}"
+- debug: msg=" System {{ root_password_set }}"
+
+- debug: msg=" System {{ mysql_root_password }}"
+
+- name: Install mysql
+  become: true
+  apt:
+    name: mysql-server
+    state: latest
+    update_cache: yes
+
+# MySQL Configuration
+
+
+- name: Set the root password
+  become: true 
+  mysql_user:
+    name: root
+    password: "{{ mysql_root_password }}"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+  tags: [ mysql, mysql-root ]
+  when: root_password_set.stat.exists == False
+
+
+- name: Remove all anonymous user accounts
+  become: true 
+  mysql_user:
+    name: ''
+    host_all: yes
+    state: absent
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+  tags: [ mysql ]
+
+- name: Remove the MySQL test database
+  become: true 
+  mysql_db:
+    name: test
+    state: absent
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+  tags: [ mysql ]   
+
+- name: create file /root/.my.cnf
+  become: true 
+  template:
+    src: "my-root.cnf.j2"       
+    dest: "/etc/.my.cnf"
+    owner: root
+    group: root
+    mode: 0640
+  tags: [ mysql, mysql-root ]
+  when:  root_password_set.stat.exists  == False
